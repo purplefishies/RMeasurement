@@ -10,7 +10,7 @@
 
 library(gmp)
 
-as.measurement <- function(x,sd=NA,mean=NA,nsigfigs=NA,sep=" ") {
+as.measurement <- function(x,sd=NA,mean=NA,nsigfigs=NA,digits=NULL,sep=" ") {
 
     num_sigfigs <- if ( is.na(nsigfigs) ) { NA } else { nsigfigs }
     
@@ -70,6 +70,13 @@ as.measurement <- function(x,sd=NA,mean=NA,nsigfigs=NA,sep=" ") {
     tmp
 }
 
+setMethod("as.measurement",
+          signature="measurement",
+          definition=function(x) {
+              x
+          }
+          )
+
 print.measurement = function(obj) {
     obj$inspect()
 }
@@ -77,14 +84,19 @@ print.measurement = function(obj) {
 # Significant figures for multiplication and division should
 # be set to the minmium in a sequence of calculations
 #
-`*.measurement` = function(meas,omeas) {
+`*.measurement` = function(tmeas,tomeas) {
+    meas = as.measurement(tmeas)
+    omeas = as.measurement(tomeas)
     as.measurement( (meas$get_x() * omeas$get_x()),
                    sd=(meas$get_x() * omeas$get_x())*(meas$get_uncertainty_calc()/ meas$get_x() + omeas$get_uncertainty_calc()/omeas$get_x()),
                    nsigfigs=min(meas$get_sigfigs(),omeas$get_sigfigs())
                    )
 }
 
-`/.measurement` = function(meas,omeas) {
+
+`/.measurement` = function(tmeas,tomeas) {
+    meas = as.measurement(tmeas)
+    omeas = as.measurement(tomeas)
     as.measurement( (meas$get_x() / omeas$get_x()),
                    sd=(meas$get_x() / omeas$get_x())*(meas$get_uncertainty_calc()/ meas$get_x() + omeas$get_uncertainty_calc()/omeas$get_x()),
                    nsigfigs=min(meas$get_sigfigs(),omeas$get_sigfigs())
@@ -93,7 +105,9 @@ print.measurement = function(obj) {
 
 # Significant figures for addition and subtraction should
 # be set to the maximum of a sequence of calculations
-`+.measurement` = function(meas,omeas) {
+`+.measurement` = function(tmeas,tomeas) {
+    meas = as.measurement(tmeas)
+    omeas = as.measurement(tomeas)
     as.measurement( (meas$get_x() + omeas$get_x()),
                    sd=(meas$get_uncertainty_calc() + omeas$get_uncertainty_calc() ),
                    nsigfigs=max(meas$get_sigfigs(),omeas$get_sigfigs())
@@ -101,6 +115,8 @@ print.measurement = function(obj) {
 }
 
 `-.measurement` = function(meas,omeas) {
+    meas = as.measurement(tmeas)
+    omeas = as.measurement(tomeas)
     as.measurement( meas$get_x() - omeas$get_x(),
                    sd=(meas$get_uncertainty_calc() + omeas$get_uncertainty_calc() ),
                    nsigfigs=max(meas$get_sigfigs(),omeas$get_sigfigs())
