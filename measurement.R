@@ -81,14 +81,14 @@ print.measurement = function(obj) {
 `+.measurement` = function(meas,omeas) {
     as.measurement( mean=(meas$get_x() + omeas$get_x()),
                    sd=(meas$get_uncertainty() + omeas$get_uncertainty() ),
-                   nsigfigs=min(meas$get_sigfigs(),omeas$get_sigfigs())
+                   nsigfigs=max(meas$get_sigfigs(),omeas$get_sigfigs())
                    )
 }
 
 `-.measurement` = function(meas,omeas) {
     as.measurement( mean=(meas$get_x() - omeas$get_x()),
                    sd=(meas$get_uncertainty() + omeas$get_uncertainty() ),
-                   nsigfigs=min(meas$get_sigfigs(),omeas$get_sigfigs())
+                   nsigfigs=max(meas$get_sigfigs(),omeas$get_sigfigs())
                    )
 }
 
