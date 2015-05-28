@@ -114,7 +114,7 @@ print.measurement = function(obj) {
                    )
 }
 
-`-.measurement` = function(meas,omeas) {
+`-.measurement` = function(tmeas,tomeas) {
     meas = as.measurement(tmeas)
     omeas = as.measurement(tomeas)
     as.measurement( meas$get_x() - omeas$get_x(),
@@ -123,4 +123,12 @@ print.measurement = function(obj) {
                    )
 }
 
+`^.measurement` = function(tmeas,tomeas) {
+    meas = as.measurement(tmeas)
+    omeas = as.numeric(tomeas)
+    as.measurement( meas$get_x()^omeas ,
+                   sd=(meas$get_x()^omeas*(abs(omeas)*meas$get_uncertainty_calc() / meas$get_x() )),
+                   nsigfigs=meas$get_sigfigs()
+                   ) 
+}
 
